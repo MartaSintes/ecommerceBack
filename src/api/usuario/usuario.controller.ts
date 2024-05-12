@@ -11,4 +11,10 @@ export class UsuarioController {
     const usuario = await this.usuarioService.createUsuario(data);
     res.status(200).send(usuario);
   }
+  @Post('login')
+  async login(@Res() res, @Req() req) {
+    const data = req.body;
+    const usuario = await this.usuarioService.login(data);
+    res.status(200).send(usuario);
+  }
 }
