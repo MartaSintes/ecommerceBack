@@ -17,7 +17,7 @@ export class UsuarioService {
         };
       } else {
         const salt = await bcrypt.genSalt(10);
-        const hash = await bcrypt.hash(data.password, salt);
+        const hash = await bcrypt.hash('123456', salt);
 
         data.password = hash;
         const usuario = await this.usuarioModel.create(data);
@@ -27,7 +27,25 @@ export class UsuarioService {
       console.log(error);
       return {
         data: undefined,
-        message: 'El correo electrónico ya está en uso',
+        message: 'No se pudo crear usuario',
+      };
+    }
+  }
+
+  async login(data: any) {
+    const usuario = await this.usuarioModel.find({ email: data.email });
+    if (usuario.length >= 1) {
+      const compare = await bcrypt.compare(data.password, usuario[0].password);
+
+      if (compare) {
+        return { data: usuario[0] };
+      } else {
+        return { data: undefined, message: 'La contraseña es incorrecta.' };
+      }
+    } else {
+      return {
+        data: undefined,
+        message: 'El correo electrónico no encontrado.',
       };
     }
   }
