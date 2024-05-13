@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsuarioService {
-  constructor(@InjectModel('usuario') private usuarioModel) {}
+  constructor(
+    @InjectModel('usuario') private usuarioModel,
+    private readonly _jwtService: JwtService,
+  ) {}
 
   async createUsuario(data: any) {
     try {
@@ -38,14 +42,21 @@ export class UsuarioService {
       const compare = await bcrypt.compare(data.password, usuario[0].password);
 
       if (compare) {
-        return { data: usuario[0] };
+        const jwt = this._jwtService.sign({
+          sub: usuario[0]._id,
+          nombres: usuario[0].nombre,
+          apellidos: usuario[0].apellidos,
+          email: usuario[0].email,
+          rol: usuario[0].rol,
+        });
+        return { data: usuario[0], jwt };
       } else {
         return { data: undefined, message: 'La contraseña es incorrecta.' };
       }
     } else {
       return {
         data: undefined,
-        message: 'El correo electrónico no encontrado.',
+        message: 'Correo electrónico no encontrado.',
       };
     }
   }
