@@ -35,6 +35,14 @@ export class UsuarioService {
       };
     }
   }
+  async getUsuarios() {
+    try {
+      const usuarios = await this.usuarioModel.find().sort({ createdAt: -1 });
+      return usuarios;
+    } catch (error) {
+      return { data: undefined, message: 'No se pudo obtener los usuarios' };
+    }
+  }
 
   async login(data: any) {
     const usuario = await this.usuarioModel.find({ email: data.email });
