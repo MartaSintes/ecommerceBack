@@ -44,6 +44,49 @@ export class UsuarioService {
     }
   }
 
+  async getUsuario(id: any) {
+    const usuario = await this.usuarioModel.findOne({ _id: id });
+    if (usuario) {
+      return usuario;
+    } else {
+      return { data: undefined, message: 'No se pudo obtener los usuario' };
+    }
+  }
+
+  async updateUsuario(id: any, data: any) {
+    try {
+      const usuario = await this.usuarioModel.findOne({ _id: id });
+      if (usuario) {
+        const reg = await this.usuarioModel.findOneAndUpdate(
+          { _id: id },
+          {
+            nombres: data.nombres,
+            apellidos: data.apellidos,
+            email: data.email,
+            rol: data.rol,
+          },
+        );
+        return reg;
+      } else {
+        return { data: undefined, message: 'No se pudo obtener los usuarios' };
+      }
+    } catch (error) {
+      return { data: undefined, message: 'No se pudo actualizar el usuario' };
+    }
+  }
+  async deleteUsuario(id: any) {
+    try {
+      const usuario = await this.usuarioModel.findByIdAndRemove(id);
+      if (usuario) {
+        return { message: 'Usuario eliminado correctamente' };
+      } else {
+        return { data: undefined, message: 'No se pudo eliminar el usuario' };
+      }
+    } catch (error) {
+      return { data: undefined, message: 'Error al eliminar el usuario' };
+    }
+  }
+
   async login(data: any) {
     const usuario = await this.usuarioModel.find({ email: data.email });
     if (usuario.length >= 1) {
