@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import slugify from 'slugify';
+import * as fs from 'fs-extra';
+import * as path from 'path';
 
 @Injectable()
 export class ProductoService {
@@ -116,6 +118,91 @@ export class ProductoService {
       }
     } catch (error) {
       return { data: undefined, message: 'No se pudo obtener la galeria' };
+    }
+  }
+
+  async updateProducto(id, data) {
+    try {
+      const producto = await this.productoModel.findOne({ _id: id });
+      if (producto) {
+        //
+        const producto = await this.productoModel.findOneAndUpdate(
+          { _id: id },
+          {
+            titulo: data.titulo,
+            descripcion: data.descripcion,
+          },
+        );
+
+        return { data: producto };
+      } else {
+        return { data: undefined, message: 'No se pudo encontrar el producto' };
+      }
+    } catch (error) {
+      return { data: undefined, message: 'No se pudo actualizar el producto' };
+    }
+  }
+
+  async uploadImgProducto(data, file) {
+    console.log(data);
+    console.log(file);
+    try {
+      data.imagen = file.filename;
+      const imagen = await this.producto_galeriaModel.create(data);
+      return { data: imagen };
+    } catch (error) {
+      return { data: undefined, message: 'No se pudo agregar la imagen' };
+    }
+  }
+  async deleteImgProducto(id) {
+    try {
+      const imagen = await this.producto_galeriaModel.findOne({ _id: id });
+      if (imagen) {
+        await fs.remove(path.resolve('./uploads/productos/' + imagen.imagen));
+        const imagen_delete = await this.producto_galeriaModel.findOneAndDelete(
+          { _id: id },
+        );
+        if (!imagen_delete) {
+          return {
+            data: undefined,
+            message: 'La imagen no se encontró en la base de datos',
+          };
+        }
+        return { data: imagen_delete };
+      } else {
+        return {
+          data: undefined,
+          message: 'No se pudo encontrar la imagen con el ID: ' + id,
+        };
+      }
+    } catch (error) {
+      console.error('Error al eliminar la imagen: ', error);
+      return {
+        data: undefined,
+        message: 'Error al eliminar la imagen: ' + error.message,
+      };
+    }
+  }
+  async deleteProducto(id: any) {
+    try {
+      const producto = await this.productoModel.findOne({ _id: id });
+      if (producto) {
+        // Eliminar la galería asociada al producto
+        await this.producto_galeriaModel.deleteMany({ producto: id });
+        // Eliminar el producto
+        await this.productoModel.deleteOne({ _id: id });
+        return { data: producto };
+      } else {
+        return {
+          data: undefined,
+          message: 'No se encontró el producto con el ID: ' + id,
+        };
+      }
+    } catch (error) {
+      return {
+        data: undefined,
+        message: 'Error al eliminar el producto: ' + error.message,
+      };
     }
   }
 }

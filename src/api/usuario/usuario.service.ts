@@ -74,11 +74,12 @@ export class UsuarioService {
       return { data: undefined, message: 'No se pudo actualizar el usuario' };
     }
   }
-  async deleteUsuario(id: any) {
+  async deleteUsuario(id) {
     try {
-      const usuario = await this.usuarioModel.findByIdAndRemove(id);
+      const usuario = await this.usuarioModel.findOne({ _id: id });
       if (usuario) {
-        return { message: 'Usuario eliminado correctamente' };
+        await this.usuarioModel.findOneAndDelete({ _id: id });
+        return { data: true };
       } else {
         return { data: undefined, message: 'No se pudo eliminar el usuario' };
       }

@@ -1,18 +1,20 @@
 import {
   Controller,
+  Delete,
   Get,
   Param,
   Post,
   Put,
   Req,
   Res,
+  UploadedFile,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ProductoService } from './producto.service';
 import { AuthGuard } from 'src/guards/auth/auth.guard';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import { extname } from 'path';
@@ -33,7 +35,7 @@ export class ProductoController {
         },
       }),
       limits: {
-        fileSize: 10 * 1024 * 1024,
+        fileSize: 2 * 1024 * 1024,
       },
     }),
   )
@@ -43,6 +45,28 @@ export class ProductoController {
     const producto = await this._productoService.createProducto(data, files);
     res.status(200).send(producto);
   }
+
+  @Post('uploadImgProducto')
+  @UseInterceptors(
+    FileInterceptor('imagen', {
+      storage: diskStorage({
+        destination: './uploads/productos',
+        filename: (req, file, cb) => {
+          cb(null, uuidv4() + '' + extname(file.originalname));
+        },
+      }),
+      limits: {
+        fileSize: 2 * 1024 * 1024,
+      },
+    }),
+  )
+  @UseGuards(AuthGuard)
+  async uploadImgProducto(@Res() res, @Req() req, @UploadedFile() file) {
+    const data = req.body;
+    const imagen = await this._productoService.uploadImgProducto(data, file);
+    res.status(200).send(imagen);
+  }
+
   @Get('getProductos/:filtro')
   @UseGuards(AuthGuard)
   async getProductos(@Res() res, @Req() req, @Param('filtro') filtro) {
@@ -80,5 +104,29 @@ export class ProductoController {
   async getGaleriaProducto(@Res() res, @Req() req, @Param('id') id: any) {
     const galeria = await this._productoService.getGaleriaProducto(id);
     res.status(200).send(galeria);
+  }
+  @Put('updateProducto/:id')
+  @UseGuards(AuthGuard)
+  async updateProducto(@Res() res, @Req() req, @Param('id') id: any) {
+    const data = req.body;
+    const producto = await this._productoService.updateProducto(id, data);
+    res.status(200).send(producto);
+  }
+
+  @Delete('deleteImgProducto/:id')
+  @UseGuards(AuthGuard)
+  async deleteImgProducto(@Res() res, @Req() req, @Param('id') id: any) {
+    const imagen = await this._productoService.deleteImgProducto(id);
+    res.status(200).send(imagen);
+  }
+  @Delete('deleteProducto/:id')
+  @UseGuards(AuthGuard)
+  async deleteProducto(@Res() res, @Param('id') id: any) {
+    const result = await this._productoService.deleteProducto(id);
+    if (result.data) {
+      res.status(200).send(result);
+    } else {
+      res.status(404).send(result);
+    }
   }
 }

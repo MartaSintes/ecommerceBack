@@ -47,8 +47,8 @@ export class UsuarioController {
   @Delete('deleteUsuario/:id')
   @UseGuards(AuthGuard)
   async deleteUsuario(@Res() res, @Param('id') id: any) {
-    const result = await this.usuarioService.deleteUsuario(id);
-    res.status(200).send(result);
+    const usuario = await this.usuarioService.deleteUsuario(id);
+    res.status(200).send(usuario);
   }
 
   @Post('login')
