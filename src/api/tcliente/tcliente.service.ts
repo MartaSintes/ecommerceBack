@@ -76,4 +76,22 @@ export class TclienteService {
       };
     }
   }
+  async gettCliente(filtro) {
+    try {
+      const searchTerm = filtro.split(' ');
+      const regex = new RegExp(
+        searchTerm.map((term) => `(?=.*\\b${term}\\b)`).join(''),
+        'i',
+      );
+      const query = {
+        $or: ['fullnames', 'nombres', 'email', 'apellidos'].map((field) => ({
+          [field]: regex,
+        })),
+      };
+      const clientes = await this._clienteModel.find(query);
+      return clientes;
+    } catch (error) {
+      return { data: undefined, message: 'No se pudo obtener los clientes' };
+    }
+  }
 }
