@@ -18,4 +18,22 @@ export class GuestService {
       return { data: undefined, message: 'No se pudo obtener los productos.' };
     }
   }
+  async getProductoShop(slug: string) {
+    try {
+      const producto = await this.productoModel.findOne({ slug, estado: true });
+
+      if (producto) {
+        const galeria = await this.producto_galeriaModel.find({
+          producto: producto._id,
+        });
+
+        return { data: producto, galeria };
+      } else {
+        return { data: undefined, message: 'No se pudo encontrar el producto' };
+      }
+    } catch (error) {
+      console.error('Error al obtener el producto:', error);
+      return { data: undefined, message: 'No se pudo obtener el producto' };
+    }
+  }
 }

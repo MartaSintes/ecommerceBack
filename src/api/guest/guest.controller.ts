@@ -25,4 +25,10 @@ export class GuestController {
     );
     res.status(200).sendFile(file_);
   }
+  @Get('getProductoShop/:slug')
+  async getProductoShop(@Res() res, @Param('slug') slug) {
+    const { data: producto, galeria } =
+      await this._guestService.getProductoShop(slug);
+    res.status(200).send({ producto, galeria });
+  }
 }
