@@ -21,7 +21,7 @@ export class UsuarioService {
         };
       } else {
         const salt = await bcrypt.genSalt(10);
-        const hash = await bcrypt.hash('123456', salt);
+        const hash = await bcrypt.hash(data.password, salt);
 
         data.password = hash;
         const usuario = await this.usuarioModel.create(data);
