@@ -14,10 +14,11 @@ export class OrdenService {
     }
   }
 
-  async findOrdenesUsuario(usuarioId: string) {
+  async findOrdenes() {
     try {
       const ordenes = await this.ordenModel
-        .find({ usuario: usuarioId })
+        .find()
+        .populate('cliente')
         .populate('producto');
 
       return { data: ordenes };

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { TclienteService } from './tcliente.service';
-import { TclienteController } from './tcliente.controller';
+import { ClienteService } from './cliente.service';
+import { ClienteController } from './cliente.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
 import { ClienteSchema } from 'src/schemas/cliente.schema';
@@ -15,7 +15,7 @@ import { ClienteSchema } from 'src/schemas/cliente.schema';
       },
     }),
   ],
-  providers: [TclienteService],
-  controllers: [TclienteController],
+  providers: [ClienteService],
+  controllers: [ClienteController],
 })
-export class TclienteModule {}
+export class ClienteModule {}

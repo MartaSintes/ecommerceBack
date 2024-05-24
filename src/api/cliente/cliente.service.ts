@@ -4,13 +4,13 @@ import { InjectModel } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
-export class TclienteService {
+export class ClienteService {
   constructor(
     @InjectModel('cliente') private _clienteModel,
     private readonly _jwtService: JwtService,
   ) {}
 
-  async createTCliente(data: any) {
+  async createCliente(data: any) {
     try {
       const _cliente = await this._clienteModel.find({ email: data.email });
 
@@ -37,7 +37,7 @@ export class TclienteService {
     }
   }
 
-  async logintCliente(data: any) {
+  async loginCliente(data: any) {
     try {
       const clientes = await this._clienteModel.find({ email: data.email });
       if (clientes.length >= 1) {
@@ -76,7 +76,7 @@ export class TclienteService {
       };
     }
   }
-  async gettCliente(filtro) {
+  async getCliente(filtro) {
     try {
       const searchTerm = filtro.split(' ');
       const regex = new RegExp(

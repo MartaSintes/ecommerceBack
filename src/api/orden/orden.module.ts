@@ -4,8 +4,8 @@ import { OrdenService } from './orden.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { OrdenSchema } from '../../schemas/orden.schema';
 import { JwtModule } from '@nestjs/jwt';
-import { usuarioSchema } from '../../schemas/usuario.schema';
 import { ProductoSchema } from '../../schemas/producto.schema';
+import { ClienteSchema } from '../../schemas/cliente.schema';
 
 @Module({
   imports: [
@@ -15,8 +15,8 @@ import { ProductoSchema } from '../../schemas/producto.schema';
         schema: OrdenSchema,
       },
       {
-        name: 'usuario',
-        schema: usuarioSchema,
+        name: 'cliente',
+        schema: ClienteSchema,
       },
       {
         name: 'producto',
