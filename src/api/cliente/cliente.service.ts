@@ -78,6 +78,10 @@ export class ClienteService {
   }
   async getCliente(filtro) {
     try {
+      if (filtro === 'undefined') {
+        const clientes = await this._clienteModel.find();
+        return clientes;
+      }
       const searchTerm = filtro.split(' ');
       const regex = new RegExp(
         searchTerm.map((term) => `(?=.*\\b${term}\\b)`).join(''),
