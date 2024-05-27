@@ -8,9 +8,12 @@ import { GuestModule } from './api/guest/guest.module';
 import { OrdenModule } from './api/orden/orden.module';
 import { ClienteModule } from './api/cliente/cliente.module';
 
+import * as dotenv from 'dotenv';
+dotenv.config();
+
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost/nest'),
+    MongooseModule.forRoot(process.env.MONGO_URI),
     UsuarioModule,
     ProductoModule,
     ClienteModule,
